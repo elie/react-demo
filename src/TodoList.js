@@ -1,29 +1,30 @@
 import React, { Component } from "react";
 import Todo from "./Todo";
 import NewTodoForm from "./NewTodoForm";
+import uuid from "uuidv4";
 
 export default class TodoList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos: ["Eat", "Sleep", "Go Home"]
+      todos: [
+        { task: "Eat", id: uuid() },
+        { task: "Sleep", id: uuid() },
+        { task: "Go Home", id: uuid() }
+      ]
     };
-    // this.addTodo = this.addTodo.bind(this) // OLDER METHOD BINDING
   }
-  //   addTodo() {} // OLDER CLASS METHOD
-
-  addTodo = () => {}; // keyword this refers to the component
 
   addTodo = todo => {
     this.setState({
-      todos: this.state.todos.concat(todo.task)
+      todos: this.state.todos.concat([{ task: todo.task, id: uuid() }])
     });
   };
 
   editTodo = (i, todo) => {
-    let todos = this.state.todos.map(function(val, idx) {
-      if (i === idx) {
-        val = todo.task;
+    let todos = this.state.todos.map(val => {
+      if (val.id === i) {
+        val.task = todo.task;
       }
       return val;
     });
@@ -31,17 +32,17 @@ export default class TodoList extends Component {
   };
 
   removeTodo = i => {
-    let todos = this.state.todos.filter((v, idx) => idx !== i);
+    let todos = this.state.todos.filter(v => v.id !== i);
     this.setState({ todos });
   };
 
   render() {
-    let todos = this.state.todos.map((v, i) => (
+    let todos = this.state.todos.map(v => (
       <Todo
-        removeTodo={this.removeTodo.bind(this, i)}
-        editTodo={this.editTodo.bind(this, i)}
-        task={v}
-        key={i}
+        removeTodo={this.removeTodo.bind(this, v.id)}
+        editTodo={this.editTodo.bind(this, v.id)}
+        task={v.task}
+        key={v.id}
       />
     ));
     return (
